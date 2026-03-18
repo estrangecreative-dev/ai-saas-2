@@ -7,12 +7,12 @@ A fully self-contained interactive prototype. No build step, no dependencies to 
 Just open the file in any modern browser:
 
 ```
-open concept-v2.html       # macOS
-start concept-v2.html      # Windows
-xdg-open concept-v2.html   # Linux
+open index.html       # macOS
+start index.html      # Windows
+xdg-open index.html   # Linux
 ```
 
-Or drag `concept-v2.html` into a browser window.
+Or drag `index.html` into a browser window.
 
 > **Note:** The file loads fonts from Google Fonts (cdn). If you're offline, system fonts will be used as fallback — the prototype still works fully.
 
@@ -38,6 +38,6 @@ Or drag `concept-v2.html` into a browser window.
 
 ## File structure
 
-Single file: `concept-v2.html`  
-Size: ~267 KB  
+Single file: `index.html`
+Size: ~267 KB
 All assets (logos, icons) are embedded as base64 — no external files needed.
