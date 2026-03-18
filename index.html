@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
-<title>Concept 2: Unified Intelligence — Playlist vSaaS</title>
+<title>Playlist vSaaS — Prototype</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
 :root {
@@ -2078,10 +2077,10 @@ function go(v) {
 
 document.querySelectorAll('.nav-item').forEach(n => n.addEventListener('click', () => go(n.dataset.v)));
 document.querySelector('.sidebar-brand').addEventListener('click', () => go('home'));
-go(location.hash.slice(1) || 'home');
 
 /* ===== CHAT ===== */
 document.addEventListener('DOMContentLoaded', () => {
+go('home');
 const chatFab = document.getElementById('chatFab');
 const chatPanel = document.getElementById('chatPanel');
 const chatBody = document.getElementById('chatBody');
