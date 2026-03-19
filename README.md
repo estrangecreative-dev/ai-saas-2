@@ -1,43 +1,37 @@
-# Playlist vSaaS — Prototype
+# Playlist vSaaS — Concept 2: Your AI Assistant
 
-A fully self-contained interactive prototype. No build step, no dependencies to install.
+A prototype for the Playlist AI Assistant experience, built as a single-file HTML prototype.
 
-## Running locally
+## Getting Started
 
-Just open the file in any modern browser:
+### Option 1: Open directly
+Just open `index.html` in any browser — no build step required.
 
+### Option 2: Serve locally
+```bash
+# Using Python
+python3 -m http.server 8080
+
+# Using Node
+npx serve .
+
+# Using VS Code
+Install the "Live Server" extension and click "Go Live"
 ```
-open index.html       # macOS
-start index.html      # Windows
-xdg-open index.html   # Linux
-```
 
-Or drag `index.html` into a browser window.
-
-> **Note:** The file loads fonts from Google Fonts (cdn). If you're offline, system fonts will be used as fallback — the prototype still works fully.
+Then visit `http://localhost:8080` in your browser.
 
 ## What's inside
 
-| Destination | How to reach it |
-|---|---|
-| **Home hub** | Click the Playlist logo (top-left sidebar) |
-| **Direction 1 — Unified Intelligence** | Home hub → Concept 2 card |
-| **Concept 1 — Your AI Team** | Home hub → Concept 1 card |
-| **Onboarding** | Home hub → Concept 3 card |
-| **Workflow & Pain Analysis** | Home hub → Reference card |
-| **Direction 2** | Home hub → Direction 2 (placeholder) |
+- **Today** — Daily schedule view with AI-filled appointments
+- **Calendar** — Weekly calendar (Mon–Sun, 6AM–9PM) with AI recommendations sidebar
+- **Clients** — Client list with health scores and drawer profiles
+- **AI Assistant** — Chat tab with shortcut cards + Activity tab with goals and pending approvals
+  - Clicking "Maximize My Calendar" opens a slide-in settings panel
+- **Analytics, Marketing, Inventory** — Placeholder pages
 
-## Navigation
+## Notes
 
-- All sidebar nav items work within each concept
-- Arrow keys `←` `→` advance/rewind the Onboarding chat flow
-- Chat FABs are interactive with scripted demo responses
-- Client drawer opens by clicking any client name
-- Decision cards (cancel/approve) are interactive
-- Toggles on the Your AI and Agents pages are interactive
-
-## File structure
-
-Single file: `index.html`
-Size: ~267 KB
-All assets (logos, icons) are embedded as base64 — no external files needed.
+- Single `index.html` file — no dependencies, no build tools
+- All fonts loaded from Google Fonts (requires internet connection)
+- Prototype only — not connected to a backend

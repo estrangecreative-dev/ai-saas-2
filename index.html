@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Playlist vSaaS — Prototype</title>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
 :root {
@@ -311,13 +312,278 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; color: var(--ink-mid);
 
 /* Phase 2: Placeholder pages */
 .placeholder-page { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); }
+
+/* ===== WEEKLY CALENDAR ===== */
+.wk-layout { display: grid; grid-template-columns: 1fr 260px; gap: 20px; align-items: start; }
+.wk-legend { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.wk-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-soft); font-weight: 500; }
+.wk-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.wk-scroll-wrap { overflow-x: auto; overflow-y: auto; max-height: calc(100vh - 200px); border: 1px solid var(--border); border-radius: var(--r); background: var(--surface); }
+.wk-grid { display: flex; min-width: 700px; }
+.wk-time-gutter { width: 52px; flex-shrink: 0; position: relative; height: calc(15 * 64px); border-right: 1px solid var(--border); }
+.wk-time-label { position: absolute; right: 8px; font-size: 10px; color: var(--ink-faint); transform: translateY(-50%); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.wk-days-row { display: grid; grid-template-columns: repeat(7, 1fr); flex: 1; }
+.wk-day-col { border-right: 1px solid var(--border); }
+.wk-day-col:last-child { border-right: none; }
+.wk-day-head { padding: 10px 8px 8px; border-bottom: 1px solid var(--border); text-align: center; position: sticky; top: 0; background: var(--surface); z-index: 2; }
+.wk-day-head.today { background: var(--rose-bg); }
+.wk-day-name { font-size: 10px; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; }
+.wk-day-date { font-size: 12px; color: var(--ink-mid); margin-top: 2px; font-weight: 500; }
+.wk-day-date.today { color: var(--rose); font-weight: 700; }
+.wk-day-body { position: relative; height: calc(15 * 64px); }
+.wk-gridline { position: absolute; left: 0; right: 0; border-top: 1px solid var(--border); opacity: 0.5; }
+.wk-event { position: absolute; left: 3px; right: 3px; border-radius: 6px; padding: 5px 7px; overflow: hidden; cursor: pointer; transition: opacity 0.15s, transform 0.15s; z-index: 1; }
+.wk-event:hover { opacity: 0.88; transform: scale(1.01); z-index: 3; }
+.wk-appt { background: #EEF1FF; border-left: 3px solid var(--rose); }
+.wk-appt-ai { background: #E0F4FA; border-left: 3px solid #0891B2; }
+.wk-yoga { background: #F3E8FF; border-left: 3px solid #7C3AED; }
+.wk-break { background: var(--bg); border-left: 3px solid var(--border-mid); opacity: 0.7; }
+.wk-event-title { font-size: 11px; font-weight: 600; color: var(--ink); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wk-yoga .wk-event-title { color: #5B21B6; }
+.wk-appt-ai .wk-event-title { color: #0E7490; }
+.wk-event-sub { font-size: 10px; color: var(--ink-soft); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+.wk-ai-pin { display: inline-block; font-size: 9px; font-weight: 700; color: #0891B2; background: #CFFAFE; border-radius: 4px; padding: 1px 5px; margin-bottom: 3px; letter-spacing: 0.03em; }
+.wk-sidebar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; position: sticky; top: 20px; }
+.wk-sidebar-head { display: flex; align-items: center; gap: 8px; padding: 16px 16px 4px; }
+.wk-sidebar-icon { width: 26px; height: 26px; background: var(--rose); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+.wk-sidebar-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+.wk-sidebar-sub { font-size: 11px; color: var(--ink-soft); padding: 0 16px 14px; border-bottom: 1px solid var(--border); }
+.wk-rec-card { padding: 14px 16px; border-bottom: 1px solid var(--border); transition: opacity 0.3s; }
+.wk-rec-card.wk-rec-urgent { background: #FFF8F0; }
+.wk-rec-badge { display: inline-block; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; padding: 2px 7px; border-radius: 10px; margin-bottom: 6px; background: #FEE2CC; color: #C2410C; }
+.wk-badge-blue { background: var(--rose-bg); color: var(--rose); }
+.wk-badge-green { background: var(--teal-bg); color: var(--teal); }
+.wk-badge-purple { background: #F3E8FF; color: #6D28D9; }
+.wk-rec-text { font-size: 12px; color: var(--ink-mid); line-height: 1.55; }
+.wk-rec-text strong { color: var(--ink); }
+.wk-rec-actions { display: flex; gap: 6px; margin-top: 10px; }
+.wk-btn-go { padding: 6px 12px; background: var(--rose); color: white; border: none; border-radius: 16px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+.wk-btn-go:hover { opacity: 0.86; }
+.wk-btn-alt { padding: 6px 12px; background: transparent; color: var(--ink-soft); border: 1px solid var(--border-mid); border-radius: 16px; font-size: 11px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.wk-btn-alt:hover { border-color: var(--rose); color: var(--rose); }
+.wk-sidebar-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--border); }
+.wk-stat { padding: 12px 8px; text-align: center; border-right: 1px solid var(--border); }
+.wk-stat:last-child { border-right: none; }
+.wk-stat-val { font-size: 18px; font-weight: 400; color: var(--ink); letter-spacing: -0.02em; font-family: "DM Sans", sans-serif; }
+.wk-stat-label { font-size: 10px; color: var(--ink-soft); margin-top: 2px; font-weight: 500; }
+
+/* ===== AI PAGE TABS ===== */
+.ai-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.ai-tab { padding: 10px 20px; font-size: 13px; font-weight: 500; color: var(--ink-soft); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; font-family: inherit; background: none; border-top: none; border-left: none; border-right: none; }
+.ai-tab:hover { color: var(--ink); }
+.ai-tab.active { color: var(--rose); border-bottom-color: var(--rose); font-weight: 600; }
+.ai-tab-panel { display: none; }
+.ai-tab-panel.active { display: block; }
+
+/* ===== INLINE AI CHAT (AI Assistant page) ===== */
+.ai-tab-panel#ai-tab-chat { display: none; flex-direction: column; flex: 1; }
+.ai-tab-panel#ai-tab-chat.active { display: flex; }
+.ai-tab-panel#ai-tab-settings { display: none; flex-direction: column; flex: 1; }
+.ai-tab-panel#ai-tab-settings.active { display: flex; }
+.ai-inline-chat { display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.50); border-radius: 16px; box-shadow: 0 1px 24px 0 rgba(45, 45, 45, 0.05); border: none; flex: 1; overflow: hidden; }
+
+/* Top bar — hidden in new design, hero takes over */
+.ai-inline-chat-head { display: none; }
+
+/* Hero */
+.ai-chat-hero { padding: 48px 32px 28px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.ai-chat-hero-icon { color: var(--rose); margin-bottom: 16px; }
+.ai-chat-hero-title { font-size: 22px; font-weight: 400; color: var(--ink); line-height: 1.3; letter-spacing: -0.01em; font-family: 'DM Sans', sans-serif; margin-bottom: 10px; }
+.ai-chat-hero-sub { font-size: 14px; color: var(--ink-soft); line-height: 1.6; max-width: 520px; text-align: center; }
+
+/* Shortcut cards */
+.ai-inline-shortcuts { display: flex; gap: 12px; padding: 0 0 20px; justify-content: center; width: 473px; margin-left: auto; margin-right: auto; }
+.ai-shortcut-card { background: var(--bg); border: none; border-radius: 14px; padding: 16px 20px; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; gap: 8px; text-align: left; box-shadow: 0 1px 4px rgba(0,0,0,0.04); flex: 1; }
+.ai-shortcut-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(62,87,251,0.10); }
+.ai-shortcut-card-header { display: flex; align-items: center; gap: 8px; }
+.ai-shortcut-icon { font-size: 18px; color: var(--rose); display: flex; align-items: center; flex-shrink: 0; }
+.ai-shortcut-label { font-size: 13px; font-weight: 700; color: var(--rose); }
+.ai-shortcut-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+
+/* Prompt pills */
+.ai-inline-prompts { display: flex; flex-wrap: wrap; gap: 10px; padding: 4px 0 28px; justify-content: center; width: 473px; margin-left: auto; margin-right: auto; }
+.ai-inline-prompt { font-size: 13px; padding: 10px 20px; background: var(--bg); border: none; border-radius: 24px; cursor: pointer; color: var(--ink-soft); transition: all 0.15s; font-weight: 400; font-family: inherit; box-shadow: 0 1px 4px rgba(0,0,0,0.05); font-style: italic; }
+.ai-inline-prompt:hover { background: var(--rose-bg); color: var(--rose); box-shadow: 0 2px 8px rgba(62,87,251,0.12); }
+
+/* Messages area */
+.ai-inline-chat-body { flex: 1; padding: 0 32px 16px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+.ai-inline-msg { max-width: 86%; padding: 11px 16px; border-radius: 16px; font-size: 13px; line-height: 1.6; }
+.ai-inline-msg.user { align-self: flex-end; background: var(--rose); color: white; border-bottom-right-radius: 4px; }
+.ai-inline-msg.ai { align-self: flex-start; background: var(--bg); color: var(--ink-mid); border-bottom-left-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.ai-inline-msg.ai strong { color: var(--ink); }
+.ai-inline-msg .chat-ai-tag { font-size: 10px; font-weight: 600; color: var(--rose); margin-bottom: 6px; display: flex; align-items: center; gap: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* Input bar */
+.ai-inline-input-bar { padding: 0 8px 0 20px; display: flex; align-items: center; gap: 10px; background: var(--bg); width: 473px; height: 56px; margin: auto auto 24px; border-radius: 32px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); flex-shrink: 0; }
+.ai-inline-input { flex: 1; border: none; outline: none; font-size: 14px; font-family: inherit; color: var(--ink); background: transparent; }
+.ai-inline-input::placeholder { color: var(--ink-faint); }
+.ai-inline-send { width: 40px; height: 40px; border-radius: 50%; background: var(--rose); color: white; border: none; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.15s; }
+.ai-inline-send:hover { opacity: 0.86; }
+
+/* ===== ACTIVITY TAB ===== */
+.aia-summary { display: flex; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 18px 0; margin-bottom: 24px; }
+.aia-metric { flex: 1; text-align: center; padding: 4px 16px; }
+.aia-metric-val { font-size: 26px; font-weight: 400; color: var(--ink); letter-spacing: -0.03em; font-family: 'DM Sans', sans-serif; line-height: 1; }
+.aia-metric-label { font-size: 11px; color: var(--ink-soft); margin-top: 5px; font-weight: 500; }
+.aia-metric-div { width: 1px; background: var(--border); align-self: stretch; margin: 4px 0; flex-shrink: 0; }
+.aia-body { display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; }
+.aia-left {} .aia-right {}
+.aia-section-label { font-size: 10px; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.13em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.aia-live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); display: inline-block; animation: aiaPulse 1.8s infinite; }
+@keyframes aiaPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.aia-feed { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.aia-feed-item { display: flex; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+.aia-feed-item:last-child { border-bottom: none; }
+.aia-feed-item:hover { background: var(--bg); }
+.aia-feed-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.aia-feed-body { flex: 1; min-width: 0; }
+.aia-feed-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+.aia-feed-agent { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.aia-feed-time { font-size: 11px; color: var(--ink-faint); }
+.aia-feed-action { font-size: 13px; font-weight: 500; color: var(--ink); line-height: 1.4; }
+.aia-feed-detail { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+.aia-feed-detail.open { max-height: 80px; }
+.aia-feed-impact { font-size: 12px; color: var(--ink-soft); line-height: 1.5; padding: 6px 0 2px; border-top: 1px solid var(--border); margin-top: 6px; }
+.aia-feed-expand { font-size: 10px; color: var(--ink-faint); margin-top: 3px; user-select: none; }
+.aia-timeline { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 20px; }
+.aia-tl-row { display: grid; grid-template-columns: 72px 10px 1fr; gap: 10px; align-items: start; margin-bottom: 14px; }
+.aia-tl-row:last-child { margin-bottom: 0; }
+.aia-tl-time { font-size: 10px; color: var(--ink-faint); padding-top: 3px; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.aia-tl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.aia-tl-content { font-size: 12px; color: var(--ink-mid); line-height: 1.5; }
+.aia-tl-agent { font-weight: 600; font-size: 11px; display: block; margin-bottom: 1px; }
+.aia-tl-text { color: var(--ink-soft); }
+.aia-agents { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+.aia-agents-full { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 24px; }
+.aia-agent-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; transition: box-shadow 0.15s; }
+.aia-agent-card:hover { box-shadow: var(--shadow); }
+.aia-agent-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.aia-agent-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.aia-status-active { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal); background: var(--teal-bg); padding: 2px 7px; border-radius: 10px; }
+.aia-status-review { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #D97706; background: #FEF3C7; padding: 2px 7px; border-radius: 10px; }
+.aia-agent-name { font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.aia-agent-metric { font-size: 20px; font-weight: 400; color: var(--ink); letter-spacing: -0.02em; font-family: 'DM Sans', sans-serif; line-height: 1; margin-bottom: 3px; }
+.aia-agent-sub { font-size: 11px; color: var(--ink-soft); margin-bottom: 10px; }
+.aia-agent-actions { display: flex; gap: 6px; }
+.aia-agent-btn { padding: 5px 11px; background: var(--bg); border: 1px solid var(--border); border-radius: 14px; font-size: 11px; font-weight: 500; color: var(--ink-mid); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.aia-agent-btn:hover { border-color: var(--rose); color: var(--rose); }
+.aia-agent-review { padding: 5px 11px; background: #FEF3C7; border: none; border-radius: 14px; font-size: 11px; font-weight: 600; color: #D97706; cursor: pointer; font-family: inherit; }
+.aia-alerts { display: flex; flex-direction: column; gap: 10px; }
+.aia-alert-card { border-radius: var(--r); padding: 14px 16px; transition: opacity 0.3s; }
+.aia-alert-badge { display: inline-block; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; padding: 2px 8px; border-radius: 10px; margin-bottom: 6px; }
+.aia-badge-opp { background: #DCFCE7; color: #15803D; }
+.aia-badge-warn { background: #FEF3C7; color: #B45309; }
+.aia-alert-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.aia-alert-body { font-size: 12px; color: var(--ink-mid); line-height: 1.5; margin-bottom: 10px; }
+.aia-alert-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.aia-alert-primary { padding: 6px 12px; background: var(--rose); color: white; border: none; border-radius: 16px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+.aia-alert-primary:hover { opacity: 0.86; }
+.aia-alert-sec { padding: 6px 12px; background: transparent; color: var(--ink); border: 1px solid var(--border-mid); border-radius: 16px; font-size: 11px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.aia-alert-sec:hover { border-color: var(--rose); color: var(--rose); }
+.aia-alert-ter { padding: 6px 12px; background: transparent; color: var(--ink-faint); border: none; border-radius: 16px; font-size: 11px; cursor: pointer; font-family: inherit; }
+.aia-alert-ter:hover { color: var(--ink-soft); }
+
+/* ===== AI SETTINGS TAB ===== */
+.ais-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+.ais-stat-card { border-radius: 16px; background: rgba(255, 255, 255, 0.50); box-shadow: 0 1px 24px 0 rgba(45, 45, 45, 0.05); padding: 20px 24px; text-align: center; border: none; }
+.ais-stat-val { font-size: 32px; font-weight: 400; color: var(--ink); letter-spacing: -0.03em; font-family: 'DM Sans', sans-serif; line-height: 1; margin-bottom: 6px; }
+.ais-stat-label { font-size: 12px; color: var(--ink-soft); font-weight: 400; line-height: 1.4; }
+
+.ais-body { display: grid; grid-template-columns: 1fr 340px; gap: 28px; align-items: start; }
+.ais-section-title { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 14px; display: flex; align-items: center; }
+
+/* Goal cards */
+.ais-goal-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; margin-bottom: 14px; }
+.ais-goal-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+.ais-goal-icon { width: 36px; height: 36px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--ink-mid); }
+.ais-goal-info { flex: 1; }
+.ais-goal-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.ais-goal-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
+.ais-manage-link { font-size: 13px; font-weight: 600; color: var(--rose); text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+.ais-manage-link:hover { opacity: 0.75; }
+.ais-progress-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.ais-progress-bar { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.ais-progress-fill { height: 100%; background: var(--rose); border-radius: 3px; }
+.ais-progress-label { font-size: 12px; font-weight: 600; color: var(--ink-mid); white-space: nowrap; }
+.ais-goal-activity { border-top: 1px solid var(--border); padding-top: 12px; }
+.ais-activity-title { font-size: 11px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.ais-activity-item { font-size: 12px; color: var(--ink-mid); margin-bottom: 3px; }
+
+/* Option cards */
+.ais-option-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 20px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 14px; }
+.ais-option-icon { width: 36px; height: 36px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--ink-soft); }
+.ais-option-info { flex: 1; min-width: 0; }
+.ais-option-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+.ais-option-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.45; }
+.ais-option-cta { text-align: right; flex-shrink: 0; }
+.ais-activate-link { font-size: 13px; font-weight: 600; color: var(--rose); cursor: pointer; margin-bottom: 2px; }
+.ais-activate-link:hover { opacity: 0.75; }
+.ais-option-price { font-size: 11px; color: var(--ink-faint); }
+
+/* Approvals */
+.ais-approvals { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.ais-approval-item { padding: 16px 18px; border-bottom: 1px solid var(--border); transition: opacity 0.3s; }
+.ais-approval-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 3px; line-height: 1.4; }
+.ais-approval-sub { font-size: 12px; color: var(--ink-soft); margin-bottom: 10px; }
+.ais-approval-actions { display: flex; align-items: center; gap: 8px; }
+.ais-btn-approve { background: none; border: none; font-size: 12px; font-weight: 600; color: var(--rose); cursor: pointer; font-family: inherit; padding: 0; }
+.ais-btn-approve:hover { opacity: 0.7; }
+.ais-btn-divider { color: var(--border-mid); font-size: 12px; }
+.ais-btn-review { background: none; border: none; font-size: 12px; font-weight: 500; color: var(--ink-mid); cursor: pointer; font-family: inherit; padding: 0; }
+.ais-btn-review:hover { color: var(--ink); }
+
+/* AI page full-height layout */
+.ai-page-content { display: flex; flex-direction: column; padding: 16px 24px 24px; flex: 1; min-height: 0; }
+.ai-page-content .ai-tabs { flex-shrink: 0; }
+.ai-page-content .ai-tab-panel.active { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+/* ===== GOAL SIDE PANEL ===== */
+.goal-panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.goal-panel-overlay.open { opacity: 1; pointer-events: all; }
+.goal-panel { position: fixed; top: 0; right: -520px; width: 460px; height: 100vh; background: #fff; z-index: 301; box-shadow: -4px 0 32px rgba(0,0,0,0.12); overflow-y: auto; transition: right 0.35s cubic-bezier(0.16,1,0.3,1); display: flex; flex-direction: column; }
+.goal-panel.open { right: 0; }
+.goal-panel-inner { padding: 36px 32px 48px; flex: 1; }
+.goal-panel-title { font-size: 28px; font-weight: 400; color: var(--ink); letter-spacing: -0.02em; font-family: 'DM Sans', sans-serif; margin-bottom: 6px; }
+.goal-panel-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 32px; }
+.goal-panel-section { padding: 20px 0; border-bottom: 1px solid var(--border); }
+.goal-panel-section:last-child { border-bottom: none; }
+.goal-panel-section-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.goal-panel-section-info {}
+.goal-panel-section-name { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.goal-panel-section-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+
+/* Toggle */
+.gp-toggle { width: 42px; height: 24px; border-radius: 12px; background: var(--border-mid); position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; border: none; }
+.gp-toggle.on { background: var(--rose); }
+.gp-toggle .gp-knob { width: 20px; height: 20px; border-radius: 50%; background: white; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+.gp-toggle.on .gp-knob { left: 20px; }
+
+/* Checkbox */
+.gp-checkbox { width: 20px; height: 20px; border-radius: 4px; border: 2px solid var(--border-mid); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; background: white; }
+.gp-checkbox.checked { background: var(--rose); border-color: var(--rose); }
+.gp-checkbox.checked::after { content: ''; display: block; width: 5px; height: 9px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
+
+/* Dropdowns */
+.gp-dropdown-label { font-size: 12px; color: var(--rose); margin-bottom: 6px; margin-top: 12px; }
+.gp-dropdown { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; color: var(--ink); background: white; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; cursor: pointer; }
+.gp-dropdown:focus { outline: none; border-color: var(--rose); }
+
+/* Sub-items */
+.gp-sub-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.gp-sub-item:last-child { border-bottom: none; }
+.gp-sub-name { font-size: 14px; color: var(--ink); margin-bottom: 3px; }
+.gp-sub-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.45; }
+
+/* Make goal card clickable */
+.ais-goal-card { cursor: pointer; }
+.ais-goal-card:hover { box-shadow: var(--shadow-md); }
 </style>
 </head>
 <body>
 
 
 
-<div class="concept-banner">Concept 2 · <span>Unified Intelligence</span> <a href="demo-landing.html">← Back to demo hub</a></div>
+<div class="concept-banner">Concept 2 · <span>Your AI Assistant</span> <a href="demo-landing.html">← Back to demo hub</a></div>
 
 <div class="app">
   <div class="sidebar">
@@ -334,7 +600,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; color: var(--ink-mid);
       <div class="nav-item" data-v="marketing"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>Marketing</div>
       <div class="nav-item" data-v="analytics"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-8"/></svg>Analytics</div>
       <div class="nav-item" data-v="inventory"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M21 16V8l-9-5-9 5v8l9 5 9-5zM3.3 7L12 11.7 20.7 7M12 22V12"/></svg>Inventory</div>
-      <div class="nav-item" data-v="ai"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Your AI</div>
+      <div class="nav-item" data-v="ai"><svg class="nav-svg" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg>AI Assistant</div>
     </div>
     <div class="sidebar-footer">
       <div class="avatar">N</div>
@@ -408,7 +674,7 @@ function renderToday() {
             <div class="section-label">Needs Your Decision</div>
 
             <div class="esc-card action">
-              <div class="esc-from" style="background:var(--rose-bg);color:var(--rose)">Playlist AI \u2192 needs decision</div>
+              <div class="esc-from" style="background:var(--rose-bg);color:var(--rose)">AI Assistant \u2192 needs decision</div>
               <div class="esc-context"><strong>Keisha Moore</strong> cancelled her 1:30 PM \u2014 3rd late cancel in 8 weeks. Policy says $75 fee. She\u2019s been a client 18 months, ~$200/visit \u2014 high LTV risk if fee damages relationship.</div>
               <div class="esc-meta">Cancelled 7:02 AM \xb7 Slot already filled (Priya Patel)</div>
               <div class="esc-actions">
@@ -418,7 +684,7 @@ function renderToday() {
             </div>
 
             <div class="esc-card action">
-              <div class="esc-from" style="background:var(--rose-bg);color:var(--rose)">Playlist AI \u2192 needs approval</div>
+              <div class="esc-from" style="background:var(--rose-bg);color:var(--rose)">AI Assistant \u2192 needs approval</div>
               <div class="esc-context">New <strong>2.8\u2605 Google review</strong> mentions wait time. Drafted a response acknowledging it and offering a complimentary deep conditioning.</div>
               <div class="esc-meta">Posted 3 hours ago \xb7 Draft ready</div>
               <div class="esc-actions">
@@ -445,91 +711,229 @@ function renderToday() {
 
 /* ===== RENDER: YOUR AI ===== */
 function renderAI() {
+  // Make .main a flex column so the chat card can fill remaining height
+  document.querySelector('.main').style.cssText = 'flex:1;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;';
   return `
     <div class="page-header">
-      <div class="page-title">Your AI</div>
-      <div class="page-sub">How Playlist works for you — preferences, activity, and impact</div>
+      <div class="page-title">AI Assistant</div>
+      <div class="page-sub">Ask anything about your business — or let AI take action for you</div>
     </div>
-    <div class="page-content">
-      <div class="ai-hero">
-        <div class="ai-hero-icon"><img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAA5ADIDASIAAhEBAxEB/8QAHAABAAMAAgMAAAAAAAAAAAAAAAYHCAQFAQMJ/8QAMRAAAQMDAwIFAQcFAAAAAAAAAQIDBAAFEQYHEiExCBNBUWEyFBZCcXKBgiIzUmKR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AMZUpXvt8OVcZ7ECDHckypDiWmWm08lLWo4CQPUk0FvbN7b/AHo2U3J1Kpnk/Aitpgr45PJoh94D5KEoH8qpqvpjsboBnQO1dv0rKSy/IUhTtxISClx1z6x8gDCM+oSKwXvvt7N233En2N5tZgOLL9ufKTxdYUcpwfUp+k/I+RQQKlKUClKUE60FtFuJrctrsOmJq4i+omSE+RHx7ha8BX8cmti+Hbw/WrbVab9eX2btqZSClLqEnyYgIwQ1nqVEdCsgHHQAZOclaA3z3M0WWm7dqR+bCbASIVxzIZ4jskcjySP0qFbC2B360/ualNpltptGpEIKlQ1KyiQAOqmlHvjuUnqB7gE0Fx1DN3dt9ObmaZNmv7KkraJXEltYDsZwjHJJ9QemUnocD1AImdRTdDX+m9udNrvmpJZbbJ4MMNgKekL/AMEJ9T7k4A9SKDEO5Pht3J0jIedgW1WpLYjJRJtyeTnH/Zn6wf08h81Tj7Lsd5bL7S2nUHitC0lKkn2IPar03J8UW4epX3Y9geb0xbSSEIigKkKT6cnVDIP6An96pC4zptynOzrjMkTJbyuTr77hccWfdSjkk/nQcelKUCuXZ7lOs91i3W2SnIk2I6l5h5s4U2tJyCK4lKD6cbLa8jbgbZW3VRLTDy2y3OQFDiy8jo4PgfiGfwqFYN8Q240vcncabdPPWbTFWqPa2c/0oZBxyx7rI5HPXqB2AxKNktyvutsfuTp1T/GRIjIct6QcHm8RHdI+QlSFfxNUkkAqAJABPc+lB7rfEkT58eDEaU9JkupaZbT3WtRASB+ZIrvt0dJydDa/vGlZSy4uA/wQ4Rjm2oBSFfulST+9ae8IW0mhxKb1qNW27VN1h4LUWIlSW4Kz2WtLgDhV0PEqSkDrjJAImniv2r0Xqqzp1VeNRRNLXOG35KJ8jHlSE9SlpafqUe+CnJGT0V0ADBFK7aVaoDUl1pvUlrfQhZSl1DckJWAeihloHB79QDSg6mlKUHnJ69e9eKUoJRtXrO5aB13bdTW11aTGdAkNg9H2SR5jZ+CP+HB7gVNfFfuA7rndaa3GmedZbSfscBKFZQcf3HB6EqVnr7BI9KqKlApSlB//2Q==" style="width:20px;height:20px;object-fit:contain;filter:brightness(0) invert(1);" /></div>
-        <div class="ai-hero-text">
-          <h2>Playlist AI</h2>
-          <p>I handle your scheduling, client outreach, payments, reviews, inventory, and bookkeeping — so you can focus on your clients' hair.</p>
-        </div>
+    <div class="ai-page-content">
+
+      <!-- Summary Stats (above tabs) -->
+      <div class="ais-stats">
+        <div class="ais-stat-card"><div class="ais-stat-val">24</div><div class="ais-stat-label">Tasks Completed This Week</div></div>
+        <div class="ais-stat-card"><div class="ais-stat-val">$1,700</div><div class="ais-stat-label">Revenue Gained</div></div>
+        <div class="ais-stat-card"><div class="ais-stat-val">10</div><div class="ais-stat-label">Hours Saved</div></div>
+        <div class="ais-stat-card"><div class="ais-stat-val">2</div><div class="ais-stat-label">Active Goals</div></div>
       </div>
 
-      <div class="ai-stats">
-        <div class="ai-stat-card">
-          <div class="ai-stat-val">52</div>
-          <div class="ai-stat-label">Actions this week</div>
-        </div>
-        <div class="ai-stat-card">
-          <div class="ai-stat-val" style="color:var(--green)">$1,120</div>
-          <div class="ai-stat-label">Revenue protected</div>
-        </div>
-        <div class="ai-stat-card">
-          <div class="ai-stat-val">4.1h</div>
-          <div class="ai-stat-label">Time saved</div>
-        </div>
-        <div class="ai-stat-card">
-          <div class="ai-stat-val">91%</div>
-          <div class="ai-stat-label">Handled without you</div>
-        </div>
+      <!-- Tabs -->
+
+
+
+
+      <div class="ai-tabs">
+        <button class="ai-tab active" onclick="switchAITab('chat', this)">Chat</button>
+        <button class="ai-tab" onclick="switchAITab('settings', this)">Activity</button>
       </div>
 
-      <div class="prefs-grid">
-        <div class="pref-section">
-          <div class="pref-title">Scheduling</div>
-          <div class="pref-desc">How I manage your chair time</div>
-          <div class="toggle-row"><div><div class="tl">Fill cancelled slots from waitlist</div><div class="tl-sub">I'll reach out to waitlisted clients automatically</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Send appointment confirmations</div><div class="tl-sub">Day-before text and email to all booked clients</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Auto-book recurring clients</div><div class="tl-sub">When a session ends, suggest or book their next one</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Buffer between appointments</div></div><div class="pref-val">15 min ✎</div></div>
-          <div class="toggle-row"><div><div class="tl">Daily client limit</div></div><div class="pref-val">6 clients ✎</div></div>
-          <div class="toggle-row"><div><div class="tl">Max back-to-back color services</div><div class="tl-sub">Limits chemical exposure and fatigue</div></div><div class="pref-val">2 max ✎</div></div>
+      <!-- Chat Tab -->
+      <div class="ai-tab-panel active" id="ai-tab-chat">
+      <div class="ai-inline-chat">
+
+        <!-- Top bar -->
+        <div class="ai-inline-chat-head">
+          <div class="ai-inline-chat-head-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg>
+          </div>
+          <div class="ai-inline-chat-head-title">AI Assistant</div>
         </div>
 
-        <div class="pref-section">
-          <div class="pref-title">Payments & Revenue</div>
-          <div class="pref-desc">How I handle money</div>
-          <div class="toggle-row"><div><div class="tl">Retry failed payments automatically</div><div class="tl-sub">Up to 3 attempts over 7 days</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Suggest add-ons at booking</div><div class="tl-sub">Deep conditioning, Olaplex, treatments based on history</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Prompt package renewal at 2 remaining</div><div class="tl-sub">Message clients when their prepaid sessions run low</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Apply late cancellation fees automatically</div><div class="tl-sub">Currently off — I'll ask you each time</div></div><div class="toggle" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
+        <!-- Hero -->
+        <div class="ai-chat-hero">
+          <div class="ai-chat-hero-icon">
+            <svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg>
+          </div>
+          <div class="ai-chat-hero-title">Hey there, I'm your personal AI assistant</div>
+          <div class="ai-chat-hero-sub">Chat with me to complete tasks, discover insights, or just be a general thought partner in ways you can optimize your business!</div>
         </div>
 
-        <div class="pref-section">
-          <div class="pref-title">Clients & Marketing</div>
-          <div class="pref-desc">How I grow and retain your client base</div>
-          <div class="toggle-row"><div><div class="tl">Re-engage lapsed clients</div><div class="tl-sub">Reach out when someone misses their usual cadence</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Request reviews from loyal clients</div><div class="tl-sub">After milestone visits (10th, 20th, etc.)</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Draft responses to negative reviews</div><div class="tl-sub">I'll write it, you approve before posting</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Send birthday messages</div><div class="tl-sub">Personalized text with a special offer</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
+        <!-- Shortcut Cards -->
+        <div class="ai-inline-shortcuts">
+          <div class="ai-shortcut-card" onclick="aiInlineHandleInput('Give me my daily recap')">
+            <div class="ai-shortcut-card-header">
+              <div class="ai-shortcut-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              </div>
+              <div class="ai-shortcut-label">Daily Recap</div>
+            </div>
+            <div class="ai-shortcut-desc">Get an overview of your day and the top tasks to address.</div>
+          </div>
+          <div class="ai-shortcut-card" onclick="aiInlineHandleInput('Show my monthly performance summary')">
+            <div class="ai-shortcut-card-header">
+              <div class="ai-shortcut-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              </div>
+              <div class="ai-shortcut-label">Monthly Performance</div>
+            </div>
+            <div class="ai-shortcut-desc">Summarizes your business performance for the month</div>
+          </div>
         </div>
 
-        <div class="pref-section">
-          <div class="pref-title">Operations</div>
-          <div class="pref-desc">How I handle the back office</div>
-          <div class="toggle-row"><div><div class="tl">Track color & product inventory</div><div class="tl-sub">Based on appointment types and usage patterns</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Categorize income and expenses</div><div class="tl-sub">Auto-tag transactions for tax prep</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Track cosmetology license renewal</div><div class="tl-sub">Reminders 60 days before expiration</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
-          <div class="toggle-row"><div><div class="tl">Send new client intake forms</div><div class="tl-sub">Allergy questionnaire + style preferences</div></div><div class="toggle on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
+        <!-- Messages (hidden until conversation starts) -->
+        <div class="ai-inline-chat-body" id="aiInlineChatBody" style="display:none"></div>
+
+        <!-- Suggested Prompts -->
+        <div class="ai-inline-prompts" id="aiInlinePrompts">
+          <button class="ai-inline-prompt" onclick="aiInlineHandleInput('Which clients are at risk for churning?')">&ldquo;Which clients are at risk for churning?&rdquo;</button>
+          <button class="ai-inline-prompt" onclick="aiInlineHandleInput('Block my Mondays next month')">&ldquo;Block my Mondays next month&rdquo;</button>
+          <button class="ai-inline-prompt" onclick="aiInlineHandleInput('How can I reduce no-shows?')">&ldquo;How to reduce no-shows&rdquo;</button>
+        </div>
+
+        <!-- Input -->
+        <div class="ai-inline-input-bar">
+          <input class="ai-inline-input" id="aiInlineInput" placeholder="Write your answer..." />
+          <button class="ai-inline-send" id="aiInlineSend">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+          </button>
         </div>
       </div>
+      </div><!-- end chat tab -->
 
-      <div class="activity-section">
-        <div class="section-label">Recent Activity</div>
-        <div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--r); padding:18px 22px;">
-          <div class="ai-feed-item"><div class="ai-dot"><img src="data:image/png;base64,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" style="width:13px;height:13px;object-fit:contain;filter:brightness(0) invert(1);" /></div><div><div class="ai-feed-text">Filled cancelled 1:30 PM slot — <strong>Priya Patel</strong> booked from waitlist in 6 min</div><div class="ai-feed-time">Today, 7:08 AM · Scheduling</div></div></div>
-          <div class="ai-feed-item"><div class="ai-dot"><img src="data:image/png;base64,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" style="width:13px;height:13px;object-fit:contain;filter:brightness(0) invert(1);" /></div><div><div class="ai-feed-text">All 5 appointments confirmed. <strong>Jordan</strong> added deep conditioning (+$40)</div><div class="ai-feed-time">Yesterday, 6:00 PM · Scheduling</div></div></div>
-          <div class="ai-feed-item"><div class="ai-dot"><img src="data:image/png;base64,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" style="width:13px;height:13px;object-fit:contain;filter:brightness(0) invert(1);" /></div><div><div class="ai-feed-text">Sent re-engagement to <strong>Tasha Green</strong> — 6 weeks since last color touch-up</div><div class="ai-feed-time">Yesterday, 2:15 PM · Clients</div></div></div>
-          <div class="ai-feed-item"><div class="ai-dot"><img src="data:image/png;base64,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" style="width:13px;height:13px;object-fit:contain;filter:brightness(0) invert(1);" /></div><div><div class="ai-feed-text"><strong>Marcus Chen</strong> updated expired card — $45 deposit hold succeeded</div><div class="ai-feed-time">Yesterday, 11:30 AM · Payments</div></div></div>
-          <div class="ai-feed-item"><div class="ai-dot"><img src="data:image/png;base64,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" style="width:13px;height:13px;object-fit:contain;filter:brightness(0) invert(1);" /></div><div><div class="ai-feed-text"><strong>Destiny Williams</strong> left a 5★ Google review after my prompt on visit #15</div><div class="ai-feed-time">Monday, 5:00 PM · Clients</div></div></div>
-          <div class="ai-feed-item"><div class="ai-dot"><img src="data:image/png;base64,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" style="width:13px;height:13px;object-fit:contain;filter:brightness(0) invert(1);" /></div><div><div class="ai-feed-text">Color inventory: <strong>7N and 8A</strong> running low (~5 days). Ready to reorder from SalonCentric.</div><div class="ai-feed-time">Monday, 9:00 AM · Operations</div></div></div>
-          <div class="ai-feed-item"><div class="ai-dot"><img src="data:image/png;base64,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" style="width:13px;height:13px;object-fit:contain;filter:brightness(0) invert(1);" /></div><div><div class="ai-feed-text"><strong>Renee Williams</strong> (Destiny's mom) — booked her first appointment. Sent intake + allergy form.</div><div class="ai-feed-time">Sunday, 3:00 PM · Clients</div></div></div>
+      <div class="ai-tab-panel" id="ai-tab-settings" style="flex:1;background:rgba(255,255,255,0.50);border-radius:16px;box-shadow:0 1px 24px 0 rgba(45,45,45,0.05);overflow-y:auto;">
+        <div class="ais-body" style="padding:24px;">
+
+          <!-- Left column -->
+          <div class="ais-left">
+            <div class="ais-section-title">Active Goals</div>
+
+            <div class="ais-goal-card" onclick="openGoalPanel()">
+              <div class="ais-goal-header">
+                <div class="ais-goal-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+                <div class="ais-goal-info">
+                  <div class="ais-goal-name">Maximize My Calendar</div>
+                  <div class="ais-goal-desc">Optimizes every spot on your calendar to increase revenue</div>
+                </div>
+                <a href="#" class="ais-manage-link">Manage &#8594;</a>
+              </div>
+              <div class="ais-progress-row">
+                <div class="ais-progress-bar"><div class="ais-progress-fill" style="width:72%"></div></div>
+                <div class="ais-progress-label">72% Weekly Utilization</div>
+              </div>
+              <div class="ais-goal-activity">
+                <div class="ais-activity-title">Recent Activity</div>
+                <div class="ais-activity-item">• Currently optimizing next month's calendar gaps</div>
+                <div class="ais-activity-item">• 12 appointments filled this week</div>
+              </div>
+            </div>
+
+            <div class="ais-goal-card">
+              <div class="ais-goal-header">
+                <div class="ais-goal-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+                <div class="ais-goal-info">
+                  <div class="ais-goal-name">Improve Client Retention</div>
+                  <div class="ais-goal-desc">Retain clients through targeted segmentation and messaging</div>
+                </div>
+                <a href="#" class="ais-manage-link">Manage &#8594;</a>
+              </div>
+              <div class="ais-progress-row">
+                <div class="ais-progress-bar"><div class="ais-progress-fill" style="width:87%"></div></div>
+                <div class="ais-progress-label">87% Retained</div>
+              </div>
+              <div class="ais-goal-activity">
+                <div class="ais-activity-title">Recent Activity</div>
+                <div class="ais-activity-item">• Contacted 13 inactive clients this week</div>
+                <div class="ais-activity-item">• Successfully booked 4 inactive clients</div>
+              </div>
+            </div>
+
+            <div class="ais-section-title" style="margin-top:28px">More Options</div>
+            <div style="font-size:12px;color:var(--ink-soft);margin-bottom:14px">Browse ways to save you time and grow your business</div>
+
+            <div class="ais-option-card">
+              <div class="ais-option-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+              <div class="ais-option-info">
+                <div class="ais-option-name">Monitor &amp; Protect My Brand</div>
+                <div class="ais-option-desc">Automatically responds to reviews and alerts you to address key insights or trending feedback.</div>
+              </div>
+              <div class="ais-option-cta"><div class="ais-activate-link">Activate</div><div class="ais-option-price">$9.99/month</div></div>
+            </div>
+
+            <div class="ais-option-card">
+              <div class="ais-option-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg></div>
+              <div class="ais-option-info">
+                <div class="ais-option-name">Grow My Services Revenue</div>
+                <div class="ais-option-desc">Provides proactive insights and suggestions to increase your service revenue</div>
+              </div>
+              <div class="ais-option-cta"><div class="ais-activate-link">Activate</div><div class="ais-option-price">$9.99/month</div></div>
+            </div>
+
+            <div class="ais-option-card">
+              <div class="ais-option-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div class="ais-option-info">
+                <div class="ais-option-name">Manage My Inventory</div>
+                <div class="ais-option-desc">Recurring and automatic inventory management</div>
+              </div>
+              <div class="ais-option-cta"><div class="ais-activate-link">Activate</div><div class="ais-option-price">$5.99/month</div></div>
+            </div>
+          </div>
+
+          <!-- Right column -->
+          <div class="ais-right">
+            <div class="ais-section-title">Pending Approvals (4) <span style="color:#EF4444;font-size:14px;margin-left:4px">&#10071;</span></div>
+            <div class="ais-approvals">
+              <div class="ais-approval-item">
+                <div class="ais-approval-title">Approve 15% discount offer for 47 inactive clients</div>
+                <div class="ais-approval-sub">Est. +$1,200 Revenue</div>
+                <div class="ais-approval-actions">
+                  <button class="ais-btn-approve" onclick="this.closest('.ais-approval-item').style.opacity='0.4';this.closest('.ais-approval-item').style.pointerEvents='none'">Approve</button>
+                  <span class="ais-btn-divider">|</span>
+                  <button class="ais-btn-review">Review</button>
+                </div>
+              </div>
+              <div class="ais-approval-item">
+                <div class="ais-approval-title">Confirm Olaplex order ($186.24)</div>
+                <div class="ais-approval-sub">Approval needed to reorder</div>
+                <div class="ais-approval-actions">
+                  <button class="ais-btn-approve" onclick="this.closest('.ais-approval-item').style.opacity='0.4';this.closest('.ais-approval-item').style.pointerEvents='none'">Approve</button>
+                  <span class="ais-btn-divider">|</span>
+                  <button class="ais-btn-review">Review</button>
+                </div>
+              </div>
+              <div class="ais-approval-item">
+                <div class="ais-approval-title">Confirm automatic rescheduling for 3 appointments</div>
+                <div class="ais-approval-sub">Resolves double-booking</div>
+                <div class="ais-approval-actions">
+                  <button class="ais-btn-approve" onclick="this.closest('.ais-approval-item').style.opacity='0.4';this.closest('.ais-approval-item').style.pointerEvents='none'">Approve</button>
+                  <span class="ais-btn-divider">|</span>
+                  <button class="ais-btn-review">Review</button>
+                </div>
+              </div>
+              <div class="ais-approval-item">
+                <div class="ais-approval-title">Confirm automatic rescheduling for 3 appointments</div>
+                <div class="ais-approval-sub">Resolves double-booking</div>
+                <div class="ais-approval-actions">
+                  <button class="ais-btn-approve" onclick="this.closest('.ais-approval-item').style.opacity='0.4';this.closest('.ais-approval-item').style.pointerEvents='none'">Approve</button>
+                  <span class="ais-btn-divider">|</span>
+                  <button class="ais-btn-review">Review</button>
+                </div>
+              </div>
+              <div class="ais-approval-item" style="border-bottom:none">
+                <div class="ais-approval-title">Approve 15% discount offer for 47 inactive clients</div>
+                <div class="ais-approval-sub">Est. +$1,200 Revenue</div>
+                <div class="ais-approval-actions">
+                  <button class="ais-btn-approve" onclick="this.closest('.ais-approval-item').style.opacity='0.4';this.closest('.ais-approval-item').style.pointerEvents='none'">Approve</button>
+                  <span class="ais-btn-divider">|</span>
+                  <button class="ais-btn-review">Review</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
-      </div>
+      </div><!-- end settings tab -->
+
     </div>`;
 }
 
@@ -823,8 +1227,8 @@ function renderHome() {
       <div class="hl-dcard" onclick="goFromHome('today')">
         <div class="hl-dcard-stripe" style="background:#3E57FB"></div>
         <div class="hl-dcard-num">Concept 2</div>
-        <h3>Unified Intelligence</h3>
-        <p>One omniscient "Playlist AI" — a single intelligence that handles everything. Domain-organized preferences, but one voice, one identity. The orchestration is invisible infrastructure.</p>
+        <h3>Your AI Assistant</h3>
+        <p>One omniscient "AI Assistant" — a single intelligence that handles everything. Domain-organized preferences, but one voice, one identity. The orchestration is invisible infrastructure.</p>
         <div class="hl-dcard-tags"><span class="hl-dcard-tag" style="background:#EEF1FF;color:#3E57FB">Single AI persona</span><span class="hl-dcard-tag" style="background:#F0F0F0;color:#555">Simpler mental model</span><span class="hl-dcard-tag" style="background:#F0F0F0;color:#555">Hidden orchestration</span></div>
         <div class="hl-dcard-arrow">→</div>
       </div>
@@ -832,7 +1236,7 @@ function renderHome() {
         <div class="hl-dcard-stripe" style="background:#3E57FB"></div>
         <div class="hl-dcard-num">Concept 3</div>
         <h3>AI Onboarding</h3>
-        <p>Playlist AI as business consultant from minute one. Scrapes your web presence, guides key decisions with benchmarks, configures everything, and gets you to first booking in 10 minutes.</p>
+        <p>AI Assistant as business consultant from minute one. Scrapes your web presence, guides key decisions with benchmarks, configures everything, and gets you to first booking in 10 minutes.</p>
         <div class="hl-dcard-tags"><span class="hl-dcard-tag" style="background:#EEF1FF;color:#3E57FB">Business consultant</span><span class="hl-dcard-tag" style="background:#F0F0F0;color:#555">Data-grounded</span><span class="hl-dcard-tag" style="background:#E6F7F1;color:#1A9E6F">PLG wedge</span></div>
         <div class="hl-dcard-arrow">→</div>
       </div>
@@ -872,7 +1276,139 @@ function renderPlaceholder(title, desc) {
   return '<div class="page-header"><div class="page-title">' + title + '</div><div class="page-sub">' + desc + '</div></div><div class="page-content"><div class="placeholder-page"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--ink-faint)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 13h4"/></svg><div style="font-size:15px;font-weight:600;color:var(--ink-mid);margin-top:16px">' + title + '</div><div style="font-size:13px;color:var(--ink-soft);margin-top:4px">Coming soon</div></div></div>';
 }
 function renderCheckout() { return renderPlaceholder('Checkout', 'Process payments, apply discounts, and manage transactions'); }
-function renderCalendar() { return renderPlaceholder('Calendar', 'Full calendar view with drag-and-drop scheduling'); }
+function renderCalendar() {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const dates = ['Mar 10', 'Mar 11', 'Mar 12', 'Mar 13', 'Mar 14', 'Mar 15', 'Mar 16'];
+  const todayIdx = 0;
+  const startHour = 6, endHour = 21;
+  const rowH = 64;
+  const events = [
+    {day:0,start:7,dur:1,type:'yoga',title:'Yoga Class',sub:'Morning Flow · Studio B',ai:false},
+    {day:0,start:9,dur:2.5,type:'appt',title:'Destiny Williams',sub:'Balayage + Toner',ai:false},
+    {day:0,start:11.75,dur:0.75,type:'appt',title:'Marcus Chen',sub:"Men's Cut & Style",ai:false},
+    {day:0,start:13.5,dur:3,type:'appt-ai',title:'Priya Patel',sub:'Full Color + Cut · AI filled',ai:true},
+    {day:0,start:16.75,dur:1,type:'appt',title:'Aaliyah Foster',sub:'Blowout & Style',ai:false},
+    {day:0,start:18,dur:1.5,type:'appt',title:'Jordan Rivera',sub:'Color Touch-Up',ai:false},
+    {day:1,start:8,dur:2,type:'appt',title:'Renee Williams',sub:'Full Color',ai:false},
+    {day:1,start:10.5,dur:1,type:'appt-ai',title:'Dana Price',sub:'Cut & Style · AI filled',ai:true},
+    {day:1,start:12,dur:0.5,type:'break',title:'Lunch',sub:'',ai:false},
+    {day:1,start:13,dur:3,type:'appt',title:'Simone Hall',sub:'Balayage + Olaplex',ai:false},
+    {day:1,start:16.5,dur:1.5,type:'appt',title:'Keisha Moore',sub:'Highlights',ai:false},
+    {day:2,start:7,dur:1,type:'yoga',title:'Yoga Class',sub:'Morning Flow · Studio B',ai:false},
+    {day:2,start:9,dur:1.5,type:'appt',title:'Tasha Green',sub:'Color Touch-Up',ai:false},
+    {day:2,start:11,dur:2,type:'appt-ai',title:'Maya Brooks',sub:'Keratin Treatment · AI booked',ai:true},
+    {day:2,start:14,dur:1,type:'appt',title:'Carla James',sub:'Blowout',ai:false},
+    {day:2,start:15.5,dur:2.5,type:'appt',title:'Yvette Nash',sub:'Full Color + Cut',ai:false},
+    {day:3,start:9,dur:3,type:'appt',title:'Lisa Kim',sub:'Full Color + Cut · New client',ai:false},
+    {day:3,start:12.5,dur:0.5,type:'break',title:'Lunch',sub:'',ai:false},
+    {day:3,start:13.5,dur:1,type:'appt-ai',title:'Waitlist Fill',sub:'Blowout · AI filled 8am',ai:true},
+    {day:3,start:15,dur:2,type:'appt',title:'Jordan Rivera',sub:'Deep Conditioning',ai:false},
+    {day:3,start:18,dur:1,type:'appt',title:'Destiny Williams',sub:'Toner Refresh',ai:false},
+    {day:4,start:7,dur:1,type:'yoga',title:'Yoga Class',sub:'Morning Flow · Studio B',ai:false},
+    {day:4,start:9,dur:2.5,type:'appt',title:'Brianna Lee',sub:'Balayage',ai:false},
+    {day:4,start:12,dur:1,type:'appt',title:'Marcus Chen',sub:"Men's Cut",ai:false},
+    {day:4,start:13.5,dur:2,type:'appt-ai',title:'New Booking',sub:'Highlights · AI confirmed',ai:true},
+    {day:4,start:16,dur:1,type:'appt',title:'Aaliyah Foster',sub:'Weekly Blowout',ai:false},
+    {day:4,start:17.5,dur:1.5,type:'appt',title:'Priya Patel',sub:'Cut & Style',ai:false},
+    {day:5,start:9,dur:3,type:'appt',title:'Renee Williams',sub:'Color + Olaplex',ai:false},
+    {day:5,start:12.5,dur:1.5,type:'appt-ai',title:'Open Fill',sub:'Cut · AI filled from waitlist',ai:true},
+    {day:5,start:14.5,dur:1,type:'appt',title:'Tasha Green',sub:'Blowout',ai:false},
+    {day:6,start:10,dur:1,type:'yoga',title:'Yoga (Rest Week)',sub:'Gentle Flow · Studio B',ai:false}
+  ];
+  let timeLabels = '';
+  for (let h = startHour; h <= endHour; h++) {
+    const label = h === 12 ? '12 PM' : h < 12 ? h + ' AM' : (h-12) + ' PM';
+    timeLabels += '<div class="wk-time-label" style="top:' + ((h-startHour)*rowH) + 'px">' + label + '</div>';
+  }
+  let gridLines = '';
+  for (let h = startHour; h <= endHour; h++) {
+    gridLines += '<div class="wk-gridline" style="top:' + ((h-startHour)*rowH) + 'px"></div>';
+  }
+  function buildEvents(dayIdx) {
+    return events.filter(function(e){return e.day===dayIdx;}).map(function(e) {
+      const top = (e.start - startHour) * rowH;
+      const height = Math.max(e.dur * rowH - 4, 22);
+      let cls = 'wk-event';
+      if (e.type==='yoga') cls += ' wk-yoga';
+      else if (e.type==='appt-ai') cls += ' wk-appt-ai';
+      else if (e.type==='break') cls += ' wk-break';
+      else cls += ' wk-appt';
+      const aiPin = e.ai ? '<span class="wk-ai-pin">✦ AI</span>' : '';
+      return '<div class="' + cls + '" style="top:' + top + 'px;height:' + height + 'px">' +
+        aiPin +
+        '<div class="wk-event-title">' + e.title + '</div>' +
+        (e.sub ? '<div class="wk-event-sub">' + e.sub + '</div>' : '') +
+        '</div>';
+    }).join('');
+  }
+  const dayCols = days.map(function(d,i) {
+    return '<div class="wk-day-col">' +
+      '<div class="wk-day-head' + (i===todayIdx?' today':'') + '">' +
+        '<div class="wk-day-name">' + d + '</div>' +
+        '<div class="wk-day-date' + (i===todayIdx?' today':'') + '">' + dates[i] + '</div>' +
+      '</div>' +
+      '<div class="wk-day-body">' + gridLines + buildEvents(i) + '</div>' +
+    '</div>';
+  }).join('');
+  return '<div class="page-header">' +
+    '<div class="page-title">Calendar</div>' +
+    '<div class="page-sub">Week of Mar 10\u201316 \xb7 28 appointments \xb7 <span style="color:var(--rose);font-weight:600">6 filled by AI Assistant</span></div>' +
+  '</div>' +
+  '<div class="page-content" style="padding-top:16px">' +
+    '<div class="wk-layout">' +
+      '<div class="wk-main">' +
+        '<div class="wk-legend">' +
+          '<span class="wk-legend-item"><span class="wk-legend-dot" style="background:#3E57FB"></span>Salon Appointment</span>' +
+          '<span class="wk-legend-item"><span class="wk-legend-dot" style="background:#7C3AED"></span>Yoga Class</span>' +
+          '<span class="wk-legend-item"><span class="wk-legend-dot" style="background:#0891B2"></span>AI Filled</span>' +
+        '</div>' +
+        '<div class="wk-scroll-wrap">' +
+          '<div class="wk-grid">' +
+            '<div class="wk-time-gutter">' + timeLabels + '</div>' +
+            '<div class="wk-days-row">' + dayCols + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="wk-sidebar">' +
+        '<div class="wk-sidebar-head">' +
+          '<div class="wk-sidebar-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg></div>' +
+          '<div class="wk-sidebar-title">AI Recommendations</div>' +
+        '</div>' +
+        '<div class="wk-sidebar-sub">Actions to optimize this week</div>' +
+        '<div class="wk-rec-card wk-rec-urgent">' +
+          '<div class="wk-rec-badge">Revenue risk</div>' +
+          '<div class="wk-rec-text"><strong>Saturday 4 PM is open</strong> \u2014 3 waitlisted clients want blowouts. Filling it adds ~$120.</div>' +
+          '<div class="wk-rec-actions"><button class="wk-btn-go" onclick="this.closest(\'.wk-rec-card\').style.opacity=\'0.4\';this.closest(\'.wk-rec-card\').style.pointerEvents=\'none\'">Fill slot \u2192</button><button class="wk-btn-alt">Ignore</button></div>' +
+        '</div>' +
+        '<div class="wk-rec-card">' +
+          '<div class="wk-rec-badge wk-badge-blue">Efficiency</div>' +
+          '<div class="wk-rec-text"><strong>Thursday has a 2h gap</strong> (12:30\u20132:30 PM). Add a cut or blowout \u2014 I have 2 clients ready to book.</div>' +
+          '<div class="wk-rec-actions"><button class="wk-btn-go" onclick="this.closest(\'.wk-rec-card\').style.opacity=\'0.4\';this.closest(\'.wk-rec-card\').style.pointerEvents=\'none\'">Book the slot \u2192</button><button class="wk-btn-alt">Skip</button></div>' +
+        '</div>' +
+        '<div class="wk-rec-card">' +
+          '<div class="wk-rec-badge wk-badge-green">Retention</div>' +
+          '<div class="wk-rec-text"><strong>Tasha Green</strong> is 6 weeks overdue. She\u2019s booked Sat but hasn\u2019t confirmed. Send a reminder now?</div>' +
+          '<div class="wk-rec-actions"><button class="wk-btn-go" onclick="this.closest(\'.wk-rec-card\').style.opacity=\'0.4\';this.closest(\'.wk-rec-card\').style.pointerEvents=\'none\'">Send reminder \u2192</button><button class="wk-btn-alt">Later</button></div>' +
+        '</div>' +
+        '<div class="wk-rec-card">' +
+          '<div class="wk-rec-badge wk-badge-purple">Upsell</div>' +
+          '<div class="wk-rec-text"><strong>Destiny\u2019s toner visit</strong> is a great moment for Olaplex (+$45). She\u2019s taken it before and loved it.</div>' +
+          '<div class="wk-rec-actions"><button class="wk-btn-go" onclick="this.closest(\'.wk-rec-card\').style.opacity=\'0.4\';this.closest(\'.wk-rec-card\').style.pointerEvents=\'none\'">Add to booking \u2192</button><button class="wk-btn-alt">No thanks</button></div>' +
+        '</div>' +
+        '<div class="wk-rec-card">' +
+          '<div class="wk-rec-badge wk-badge-blue">Schedule</div>' +
+          '<div class="wk-rec-text"><strong>Sunday is nearly empty.</strong> Block as personal time or open a few slots for last-minute bookings?</div>' +
+          '<div class="wk-rec-actions"><button class="wk-btn-go" onclick="this.closest(\'.wk-rec-card\').style.opacity=\'0.4\';this.closest(\'.wk-rec-card\').style.pointerEvents=\'none\'">Block it off \u2192</button><button class="wk-btn-alt" onclick="this.closest(\'.wk-rec-card\').style.opacity=\'0.4\';this.closest(\'.wk-rec-card\').style.pointerEvents=\'none\'">Open slots</button></div>' +
+        '</div>' +
+        '<div class="wk-sidebar-stats">' +
+          '<div class="wk-stat"><div class="wk-stat-val">28</div><div class="wk-stat-label">Appointments</div></div>' +
+          '<div class="wk-stat"><div class="wk-stat-val" style="color:var(--rose)">6</div><div class="wk-stat-label">AI Filled</div></div>' +
+          '<div class="wk-stat"><div class="wk-stat-val" style="color:var(--teal)">82%</div><div class="wk-stat-label">Utilization</div></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
 function renderMarketing() { return renderPlaceholder('Marketing', 'Campaigns, social, and client outreach \u2014 powered by your AI'); }
 function renderAnalytics() { return renderBusiness(); }
 function renderInventory() { return renderPlaceholder('Inventory', 'Track products, supplies, and auto-reorder'); }
@@ -1079,7 +1615,7 @@ function renderOnboarding() {
       <div class="ob-nav-item">Business</div>
       <div id="ob-sidebar-footer">
         <div id="ob-ai-icon"><img src="data:image/png;base64,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" style="width:16px;height:16px;object-fit:contain;filter:brightness(0) invert(1);" /></div>
-        <div><div id="ob-ai-name">Playlist AI</div><div id="ob-ai-sub">Online</div></div>
+        <div><div id="ob-ai-name">AI Assistant</div><div id="ob-ai-sub">Online</div></div>
       </div>
     </div>
 
@@ -1090,7 +1626,7 @@ function renderOnboarding() {
 
         <!-- State 0: Intake -->
         <div class="ob-canvas-state active" id="ob-state0">
-          <div class="ob-canvas-header"><div class="ob-canvas-title">Welcome to Playlist</div><div class="ob-canvas-sub">Let's get your business set up. Playlist AI will guide you through everything.</div></div>
+          <div class="ob-canvas-header"><div class="ob-canvas-title">Welcome to Playlist</div><div class="ob-canvas-sub">Let's get your business set up. AI Assistant will guide you through everything.</div></div>
           <div class="ob-grid">
             <div class="ob-card" id="ob-profileCard">
               <div class="ob-card-label">Business Profile</div>
@@ -1140,7 +1676,7 @@ function renderOnboarding() {
 
         <!-- State 1: Business Setup -->
         <div class="ob-canvas-state" id="ob-state1">
-          <div class="ob-canvas-header"><div class="ob-canvas-title">Business Setup</div><div class="ob-canvas-sub">Playlist AI is configuring your business based on your decisions.</div></div>
+          <div class="ob-canvas-header"><div class="ob-canvas-title">Business Setup</div><div class="ob-canvas-sub">AI Assistant is configuring your business based on your decisions.</div></div>
           <div class="ob-grid">
             <div class="ob-card populated">
               <div class="ob-card-label">Policies</div>
@@ -1198,7 +1734,7 @@ function renderOnboarding() {
 
         <!-- State 3: Review -->
         <div class="ob-canvas-state" id="ob-state3">
-          <div class="ob-canvas-header"><div class="ob-canvas-title">Setup Complete</div><div class="ob-canvas-sub">Here's everything Playlist AI configured for your business.</div></div>
+          <div class="ob-canvas-header"><div class="ob-canvas-title">Setup Complete</div><div class="ob-canvas-sub">Here's everything AI Assistant configured for your business.</div></div>
           <div class="ob-grid-full">
             <div class="ob-card populated">
               <div class="ob-card-label">Configuration Summary</div>
@@ -1254,7 +1790,7 @@ function renderOnboarding() {
       <div id="ob-chat">
         <div id="ob-chat-header">
           <div class="ob-chat-icon"><img src="data:image/png;base64,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" style="width:13px;height:13px;object-fit:contain;filter:brightness(0) invert(1);" /></div>
-          <div><div class="ob-chat-title">Playlist AI</div><div class="ob-chat-sub">Your business setup assistant</div></div>
+          <div><div class="ob-chat-title">AI Assistant</div><div class="ob-chat-sub">Your business setup assistant</div></div>
           <div id="ob-chat-step"></div>
         </div>
         <div id="ob-chat-messages"></div>
@@ -1275,7 +1811,7 @@ function renderOnboarding() {
 function initOnboarding() {
   const chapters = [
     { id:'intake', canvasState:0, messages:[
-      { speaker:'ai', text:"Hi! I'm Playlist AI. I'll help you get your business up and running today. What's your name and what kind of business are you setting up?" },
+      { speaker:'ai', text:"Hi! I'm AI Assistant. I'll help you get your business up and running today. What's your name and what kind of business are you setting up?" },
       { speaker:'user', text:"I'm Maya. I'm a solo hairstylist, just opened my own studio in Austin." },
       { speaker:'ai', text:"Great to meet you, Maya! Do you have an existing online presence I can pull from? An Instagram, Google Business listing, or website?", onShow: function(){ obPopulate('ob-profileCard'); } },
       { speaker:'user', text:"Yeah, I'm @mayacutsatx on Instagram and I have a Google Business page." },
@@ -1342,7 +1878,7 @@ function initOnboarding() {
     }
     var d=document.createElement('div'); d.className='ob-msg '+msg.speaker;
     if(silent) d.style.animation='none';
-    var sender=msg.speaker==='ai'?'Playlist AI':'Maya';
+    var sender=msg.speaker==='ai'?'AI Assistant':'Maya';
     var content=msg.html||msg.text;
     d.innerHTML='<div class="ob-msg-sender">'+sender+'</div><div class="ob-msg-bubble">'+content+'</div>';
     container.appendChild(d);
@@ -2055,8 +2591,8 @@ function go(v) {
     const mainEl = document.querySelector('.main');
     mainEl.style.cssText = '';
   }
-  // Restore main chat fab unless going to concept1, onboarding, or workflow
-  if (v !== 'concept1' && v !== 'onboarding' && v !== 'workflow' && v !== 'home') {
+  // Restore main chat fab unless going to concept1, onboarding, workflow, home, or ai
+  if (v !== 'concept1' && v !== 'onboarding' && v !== 'workflow' && v !== 'home' && v !== 'ai') {
     document.getElementById('chatFab').style.display = '';
     document.getElementById('chatPanel').style.display = '';
   } else {
@@ -2096,16 +2632,16 @@ chatFab.addEventListener('click', () => {
 
 const demoConversations = {
   'Raise my color services by 15%': [
-    { role:'ai', html:`<div class="chat-ai-tag">✦ Playlist AI</div>I'll increase all color service prices by 15%. Here's what changes:<br><br>• Balayage: $220 → <strong>$253</strong><br>• Full Color: $160 → <strong>$184</strong><br>• Color Touch-Up: $95 → <strong>$109</strong><br>• Olaplex Add-On: $45 → <strong>$52</strong><br><br>Cuts and blowouts stay the same. Existing prepaid packages won't be affected — new prices apply to future bookings only.<div class="chat-action" onclick="addMsg('user','Yes, apply them');doTyping(function(){addMsg('ai','<div class=chat-ai-tag>✦ Playlist AI</div>Done — 4 color services updated. New prices take effect for bookings made from now. I\\'ll note the change in your financials for tax time.')})">Apply changes →</div>` }
+    { role:'ai', html:`<div class="chat-ai-tag">✦ AI Assistant</div>I'll increase all color service prices by 15%. Here's what changes:<br><br>• Balayage: $220 → <strong>$253</strong><br>• Full Color: $160 → <strong>$184</strong><br>• Color Touch-Up: $95 → <strong>$109</strong><br>• Olaplex Add-On: $45 → <strong>$52</strong><br><br>Cuts and blowouts stay the same. Existing prepaid packages won't be affected — new prices apply to future bookings only.<div class="chat-action" onclick="addMsg('user','Yes, apply them');doTyping(function(){addMsg('ai','<div class=chat-ai-tag>✦ AI Assistant</div>Done — 4 color services updated. New prices take effect for bookings made from now. I\\'ll note the change in your financials for tax time.')})">Apply changes →</div>` }
   ],
   'Set up next week\u2019s schedule': [
-    { role:'ai', html:`<div class="chat-ai-tag">✦ Playlist AI</div>Based on your usual pattern, here's a draft for next week (Mar 16–22):<br><br><strong>Tue–Fri:</strong> 9 AM – 7:30 PM (5–6 clients, 15-min buffers)<br><strong>Saturday:</strong> 9 AM – 3 PM (4 clients — you usually cut Saturdays short)<br><strong>Sun–Mon:</strong> Off<br><br>Jade is scheduled Tue, Thu, Sat for front desk and shampoo.<br><br>Heads up — <strong>Jordan Rivera</strong> has her recurring color touch-up on Thursday at 6 PM. Everything else is open for booking.<div class="chat-action" onclick="addMsg('user','Make Saturday full day — I want to fit in a few more blowouts');doTyping(function(){addMsg('ai','<div class=chat-ai-tag>✦ Playlist AI</div>Updated — Saturday is now 9 AM – 7 PM with room for 6 clients. I\\'ll add Jade for the full day too. Schedule for Mar 16–22 is live — I\\'ll start accepting bookings now.')})">Looks good →</div>` }
+    { role:'ai', html:`<div class="chat-ai-tag">✦ AI Assistant</div>Based on your usual pattern, here's a draft for next week (Mar 16–22):<br><br><strong>Tue–Fri:</strong> 9 AM – 7:30 PM (5–6 clients, 15-min buffers)<br><strong>Saturday:</strong> 9 AM – 3 PM (4 clients — you usually cut Saturdays short)<br><strong>Sun–Mon:</strong> Off<br><br>Jade is scheduled Tue, Thu, Sat for front desk and shampoo.<br><br>Heads up — <strong>Jordan Rivera</strong> has her recurring color touch-up on Thursday at 6 PM. Everything else is open for booking.<div class="chat-action" onclick="addMsg('user','Make Saturday full day — I want to fit in a few more blowouts');doTyping(function(){addMsg('ai','<div class=chat-ai-tag>✦ AI Assistant</div>Updated — Saturday is now 9 AM – 7 PM with room for 6 clients. I\\'ll add Jade for the full day too. Schedule for Mar 16–22 is live — I\\'ll start accepting bookings now.')})">Looks good →</div>` }
   ],
   'Block Saturday afternoons this month': [
-    { role:'ai', html:`<div class="chat-ai-tag">✦ Playlist AI</div>I'll block Saturdays after 2 PM for Mar 15, 22, and 29.<br><br>One thing — <strong>Aaliyah Foster</strong> has a standing Saturday 3 PM blowout on March 22. Want me to:<br><br>• Move her to Saturday morning (10 AM opening)<br>• Ask her to pick a different day<br>• Keep that one as an exception<div class="chat-action" onclick="addMsg('user','Move her to 10 AM');doTyping(function(){addMsg('ai','<div class=chat-ai-tag>✦ Playlist AI</div>Done. Aaliyah\\'s 3/22 blowout moved to 10 AM — sent her a confirmation text. Saturday afternoons are blocked for the rest of March. Enjoy the time off ✨')})">Move to 10 AM →</div>` }
+    { role:'ai', html:`<div class="chat-ai-tag">✦ AI Assistant</div>I'll block Saturdays after 2 PM for Mar 15, 22, and 29.<br><br>One thing — <strong>Aaliyah Foster</strong> has a standing Saturday 3 PM blowout on March 22. Want me to:<br><br>• Move her to Saturday morning (10 AM opening)<br>• Ask her to pick a different day<br>• Keep that one as an exception<div class="chat-action" onclick="addMsg('user','Move her to 10 AM');doTyping(function(){addMsg('ai','<div class=chat-ai-tag>✦ AI Assistant</div>Done. Aaliyah\\'s 3/22 blowout moved to 10 AM — sent her a confirmation text. Saturday afternoons are blocked for the rest of March. Enjoy the time off ✨')})">Move to 10 AM →</div>` }
   ],
   'How am I doing this month vs last?': [
-    { role:'ai', html:`<div class="chat-ai-tag">✦ Playlist AI</div>Here's your Feb → March comparison (so far):<br><br><strong>Revenue:</strong> $5,940 → $6,840 (<strong>+15%</strong>)<br><strong>Chair utilization:</strong> 72% → 82% (<strong>+10pt</strong>)<br><strong>Unique clients:</strong> 18 → 21 (<strong>+3</strong>)<br><strong>Retention:</strong> 84% → 91% (<strong>+7pt</strong>)<br><strong>Late cancels:</strong> 6 → 3 (<strong>-50%</strong>)<br><br>Biggest driver: color services are up <strong>18%</strong>. Your balayage bookings have doubled since January — that Instagram reel is still working. I also filled 2 cancelled slots that would've been $480 lost revenue.`}
+    { role:'ai', html:`<div class="chat-ai-tag">✦ AI Assistant</div>Here's your Feb → March comparison (so far):<br><br><strong>Revenue:</strong> $5,940 → $6,840 (<strong>+15%</strong>)<br><strong>Chair utilization:</strong> 72% → 82% (<strong>+10pt</strong>)<br><strong>Unique clients:</strong> 18 → 21 (<strong>+3</strong>)<br><strong>Retention:</strong> 84% → 91% (<strong>+7pt</strong>)<br><strong>Late cancels:</strong> 6 → 3 (<strong>-50%</strong>)<br><br>Biggest driver: color services are up <strong>18%</strong>. Your balayage bookings have doubled since January — that Instagram reel is still working. I also filled 2 cancelled slots that would've been $480 lost revenue.`}
   ],
 };
 
@@ -2137,28 +2673,103 @@ function handleInput(text) {
   chatInput.value = '';
   const match = demoConversations[text];
   if (match) { doTyping(() => addMsg('ai', match[0].html)); }
-  else { doTyping(() => addMsg('ai', `<div class="chat-ai-tag">✦ Playlist AI</div>On it — I'll handle "<strong>${text}</strong>" and let you know when it's done. Anything else?`)); }
+  else { doTyping(() => addMsg('ai', `<div class="chat-ai-tag">✦ AI Assistant</div>On it — I'll handle "<strong>${text}</strong>" and let you know when it's done. Anything else?`)); }
 }
 
 chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleInput(chatInput.value); });
 document.getElementById('chatSend').addEventListener('click', () => handleInput(chatInput.value));
 document.querySelectorAll('.chat-sug').forEach(s => s.addEventListener('click', () => handleInput(s.textContent)));
+
+window.switchAITab = function(tab, btn) {
+  document.querySelectorAll('.ai-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ai-tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById('ai-tab-' + tab);
+  if (panel) panel.classList.add('active');
+};
+
+/* ===== INLINE AI CHAT (AI Assistant page) ===== */
+const aiInlineResponses = {
+  'Give me my daily recap': `<div class="chat-ai-tag">✦ AI Assistant</div><strong>Today, Tuesday March 10</strong><br><br>📅 <strong>5 clients scheduled</strong> · $1,240 projected revenue<br>• 9:00 AM — Destiny Williams · Balayage + Toner<br>• 11:45 AM — Marcus Chen · Men's Cut & Style<br>• 1:30 PM — Priya Patel · Full Color + Cut <span style="color:var(--teal);font-size:11px;font-weight:600">(AI filled · waitlist)</span><br>• 4:45 PM — Aaliyah Foster · Blowout & Style<br>• 6:00 PM — Jordan Rivera · Color Touch-Up<br><br>⚡ <strong>2 things need your attention:</strong><br>• Keisha Moore's cancellation fee ($75) — decision pending<br>• Marcus Chen's card on file expires this month`,
+  'Show my monthly performance summary': `<div class="chat-ai-tag">✦ AI Assistant</div><strong>March Performance · Week 2 of 4</strong><br><br><strong>Revenue:</strong> $6,840 <span style="color:var(--teal);font-size:11px">↑ 15% vs Feb</span><br><strong>Clients served:</strong> 21 <span style="color:var(--teal);font-size:11px">↑ 3 vs Feb</span><br><strong>Chair utilization:</strong> 82% <span style="color:var(--teal);font-size:11px">↑ 10pt</span><br><strong>Client retention:</strong> 91% <span style="color:var(--teal);font-size:11px">↑ 7pt</span><br><strong>Late cancels:</strong> 3 <span style="color:var(--teal);font-size:11px">↓ 50%</span><br><br>Biggest driver: color services up 18%. Your balayage bookings have doubled since January.`,
+  'Which clients are at risk for churning?': `<div class="chat-ai-tag">✦ AI Assistant</div>Based on booking cadence and engagement signals, <strong>2 clients need attention:</strong><br><br>🔴 <strong>Tasha Green</strong> — 6 weeks since last visit (her usual cadence is 4 weeks). Hasn't rebooked despite a check-in message.<br><br>🔴 <strong>Keisha Moore</strong> — 3 late cancels in 8 weeks. High LTV ($2,400) but reliability is dropping.<br><br>Want me to send a re-engagement offer to Tasha or flag Keisha for a conversation?`,
+  'How can I increase my revenue?': `<div class="chat-ai-tag">✦ AI Assistant</div>Based on your current data, here are your top 3 opportunities:<br><br>💡 <strong>Add-on upsells</strong> — Only 28% of color clients are getting Olaplex. If you hit 50%, that's ~$200/week extra.<br><br>💡 <strong>Fill open Mondays</strong> — You have 4–5 open slots most Mondays. Targeting your waitlist could add $400–600/month.<br><br>💡 <strong>Blowout package</strong> — Aaliyah and 3 others book weekly blowouts individually. A prepaid 4-pack (buy 3, get 1 free) could lock in recurring revenue.<br><br>Want me to set up any of these?`,
+  'How can I reduce no-shows?': `<div class="chat-ai-tag">✦ AI Assistant</div>Your no-show rate is currently <strong>8%</strong> — here's what's working and what can improve:<br><br>✅ <strong>Already doing:</strong> 24h confirmation texts, card-on-file holds<br><br>📌 <strong>Recommended:</strong><br>• Enable a <strong>$50 no-show fee</strong> (you currently only charge for late cancels)<br>• Switch to <strong>48h reminders</strong> — research shows 38% fewer no-shows vs 24h<br>• Add a <strong>rebooking nudge</strong> at checkout to lock in the next appointment before they leave<br><br>Implementing all three could drop your no-show rate to under 3%.`,
+};
+
+window.aiInlineHandleInput = function(text) {
+  if (!text || !text.trim()) return;
+  const body = document.getElementById('aiInlineChatBody');
+  const prompts = document.getElementById('aiInlinePrompts');
+  if (!body) return;
+
+  // Show chat body and hide prompts/shortcuts on first use
+  body.style.display = 'flex';
+  if (prompts) prompts.style.display = 'none';
+  const shortcuts = document.querySelector('.ai-inline-shortcuts');
+  if (shortcuts) shortcuts.style.display = 'none';
+  const hero = document.querySelector('.ai-chat-hero');
+  if (hero) hero.style.display = 'none';
+
+  // Add user message
+  const userMsg = document.createElement('div');
+  userMsg.className = 'ai-inline-msg user';
+  userMsg.textContent = text;
+  body.appendChild(userMsg);
+  body.scrollTop = body.scrollHeight;
+
+  // Clear input
+  const input = document.getElementById('aiInlineInput');
+  if (input) input.value = '';
+
+  // Typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'ai-inline-msg ai';
+  typing.id = 'aiInlineTyping';
+  typing.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  body.appendChild(typing);
+  body.scrollTop = body.scrollHeight;
+
+  setTimeout(() => {
+    const t = document.getElementById('aiInlineTyping');
+    if (t) t.remove();
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'ai-inline-msg ai';
+    aiMsg.innerHTML = aiInlineResponses[text] || `<div class="chat-ai-tag">✦ AI Assistant</div>On it — looking into "<strong>${text}</strong>" now. I'll have an answer for you in a moment.`;
+    body.appendChild(aiMsg);
+    body.scrollTop = body.scrollHeight;
+  }, 1100);
+};
+
+// Wire up input + send button for inline chat (runs after AI page is rendered)
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.id === 'aiInlineSend') {
+    const input = document.getElementById('aiInlineInput');
+    if (input) window.aiInlineHandleInput(input.value);
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'aiInlineInput') {
+    window.aiInlineHandleInput(document.activeElement.value);
+  }
+});
+
 }); // end DOMContentLoaded
 </script>
 
 <!-- Chat FAB + Panel -->
-<button class="chat-fab" id="chatFab"><img class="chat-fab-icon" src="https://www.figma.com/api/mcp/asset/d2488d63-b66e-48fd-a16a-d9d9fa365c69" width="31" height="34" alt="" /><span class="chat-fab-close">&#10005;</span></button>
+<button class="chat-fab" id="chatFab"><svg class="chat-fab-icon" viewBox="0 0 24 24" width="22" height="22" fill="white"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg><span class="chat-fab-close">&#10005;</span></button>
 
 <div class="chat-panel" id="chatPanel">
   <div class="chat-head">
-    <div class="chat-head-icon"><img src="data:image/png;base64,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" style="width:16px;height:16px;object-fit:contain;filter:brightness(0) invert(1);" /></div>
+    <div class="chat-head-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="white"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg></div>
     <div>
-      <div class="chat-head-text">Ask Playlist AI <span class="chat-head-sub">— anything about your business</span></div>
+      <div class="chat-head-text">Ask AI Assistant <span class="chat-head-sub">— anything about your business</span></div>
     </div>
   </div>
   <div class="chat-body" id="chatBody">
     <div class="chat-msg ai">
-      <div class="chat-ai-tag">✦ Playlist AI</div>
+      <div class="chat-ai-tag">✦ AI Assistant</div>
       Hey Nia — what can I help with? Update pricing, adjust your schedule, check on clients, pull reports — just ask.
     </div>
   </div>
@@ -2169,7 +2780,7 @@ document.querySelectorAll('.chat-sug').forEach(s => s.addEventListener('click', 
     <div class="chat-sug">How am I doing this month vs last?</div>
   </div>
   <div class="chat-input-bar">
-    <input class="chat-input" id="chatInput" placeholder="Ask Playlist AI anything..." />
+    <input class="chat-input" id="chatInput" placeholder="Ask AI Assistant anything..." />
     <button class="chat-send" id="chatSend">→</button>
   </div>
 </div>
@@ -2197,5 +2808,111 @@ document.querySelectorAll('.chat-sug').forEach(s => s.addEventListener('click', 
   </div>
 </div>
 
+
+<!-- Goal Side Panel: Maximize My Calendar -->
+<div class="goal-panel-overlay" id="goalPanelOverlay" onclick="closeGoalPanel()"></div>
+<div class="goal-panel" id="goalPanel">
+  <div class="goal-panel-inner">
+    <div class="goal-panel-title">Maximize My Calendar</div>
+    <div class="goal-panel-sub">Optimize every spot on your calendar through AI automations</div>
+
+    <!-- Fill Gaps & Reduce No-Shows -->
+    <div class="goal-panel-section">
+      <div class="goal-panel-section-header">
+        <div class="goal-panel-section-info">
+          <div class="goal-panel-section-name">Fill Gaps &amp; Reduce No-Shows</div>
+          <div class="goal-panel-section-desc">Intelligently manages your schedule to fill gaps</div>
+        </div>
+        <button class="gp-toggle on" onclick="this.classList.toggle('on');event.stopPropagation()"><div class="gp-knob"></div></button>
+      </div>
+
+      <div class="gp-sub-item">
+        <div>
+          <div class="gp-sub-name">Promotion-Based Gap Filling</div>
+          <div class="gp-sub-desc">Automatically push promotions to fill open spots</div>
+          <div class="gp-dropdown-label">Select Promotion</div>
+          <select class="gp-dropdown" onclick="event.stopPropagation()">
+            <option>Free deep conditioning with any haircut booked this week</option>
+            <option>10% off next visit</option>
+            <option>Free blowout with color service</option>
+          </select>
+          <div class="gp-dropdown-label">Send To</div>
+          <select class="gp-dropdown" onclick="event.stopPropagation()">
+            <option>Overdue VIP clients</option>
+            <option>All active clients</option>
+            <option>Waitlist clients</option>
+          </select>
+        </div>
+        <div class="gp-checkbox checked" onclick="this.classList.toggle('checked');event.stopPropagation()"></div>
+      </div>
+
+      <div class="gp-sub-item">
+        <div>
+          <div class="gp-sub-name">Smart Waitlist Management</div>
+          <div class="gp-sub-desc">Automatically text waitlisted clients when a cancellation occurs</div>
+        </div>
+        <div class="gp-checkbox checked" onclick="this.classList.toggle('checked');event.stopPropagation()"></div>
+      </div>
+
+      <div class="gp-sub-item">
+        <div>
+          <div class="gp-sub-name">No-Show Prediction</div>
+          <div class="gp-sub-desc">Flag clients with a history of cancellations and auto-send reminders or require deposits for those bookings</div>
+        </div>
+        <div class="gp-checkbox" onclick="this.classList.toggle('checked');event.stopPropagation()"></div>
+      </div>
+    </div>
+
+    <!-- Revenue-Aware Scheduling -->
+    <div class="goal-panel-section">
+      <div class="goal-panel-section-header">
+        <div class="goal-panel-section-info">
+          <div class="goal-panel-section-name">Revenue-Aware Scheduling</div>
+          <div class="goal-panel-section-desc">Maximize revenue for every appointment</div>
+        </div>
+        <button class="gp-toggle on" onclick="this.classList.toggle('on');event.stopPropagation()"><div class="gp-knob"></div></button>
+      </div>
+
+      <div class="gp-sub-item">
+        <div>
+          <div class="gp-sub-name">Smart Add-On Upsells</div>
+          <div class="gp-sub-desc">Notice a client booked a service and nudge them to include a discounted add-on to fill a partial slot</div>
+        </div>
+        <div class="gp-checkbox" onclick="this.classList.toggle('checked');event.stopPropagation()"></div>
+      </div>
+
+      <div class="gp-sub-item">
+        <div>
+          <div class="gp-sub-name">Slow Day Forecasting</div>
+          <div class="gp-sub-desc">Predict which days are likely to be light based on historical data and proactively run promotions</div>
+        </div>
+        <div class="gp-checkbox checked" onclick="this.classList.toggle('checked');event.stopPropagation()"></div>
+      </div>
+    </div>
+
+    <!-- Admin Reduction -->
+    <div class="goal-panel-section">
+      <div class="goal-panel-section-header">
+        <div class="goal-panel-section-info">
+          <div class="goal-panel-section-name">Admin Reduction</div>
+          <div class="goal-panel-section-desc">Reduce admin overhead through smart automations</div>
+        </div>
+        <button class="gp-toggle" onclick="this.classList.toggle('on');event.stopPropagation()"><div class="gp-knob"></div></button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+window.openGoalPanel = function() {
+  document.getElementById('goalPanel').classList.add('open');
+  document.getElementById('goalPanelOverlay').classList.add('open');
+};
+window.closeGoalPanel = function() {
+  document.getElementById('goalPanel').classList.remove('open');
+  document.getElementById('goalPanelOverlay').classList.remove('open');
+};
+</script>
 </body>
 </html>
