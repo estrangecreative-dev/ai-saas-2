@@ -1,6 +1,6 @@
 # Playlist vSaaS — Concept 2: Your AI Assistant
 
-A prototype for the Playlist AI Assistant experience, built as a single-file HTML prototype.
+A high-fidelity prototype for the Playlist AI Assistant experience, built as a single-file HTML prototype.
 
 ## Getting Started
 
@@ -21,17 +21,20 @@ Install the "Live Server" extension and click "Go Live"
 
 Then visit `http://localhost:8080` in your browser.
 
-## What's inside
+## Pages
 
-- **Today** — Daily schedule view with AI-filled appointments
-- **Calendar** — Weekly calendar (Mon–Sun, 6AM–9PM) with AI recommendations sidebar
-- **Clients** — Client list with health scores and drawer profiles
-- **AI Assistant** — Chat tab with shortcut cards + Activity tab with goals and pending approvals
-  - Clicking "Maximize My Calendar" opens a slide-in settings panel
+- **Today** — Daily schedule with AI-filled appointments and agent activity feed
+- **Calendar** — Weekly view (Mon–Sun, 6AM–9PM) with AI recommendations sidebar
+- **Clients** — Client list with health scores and slide-in profile drawer
+- **AI Assistant**
+  - **Chat tab** — Conversational AI with shortcut cards and suggested prompts
+  - **Activity tab** — Active Goals, Pending Approvals, and More Options
+    - Click "Maximize My Calendar" to open a detailed settings side panel
 - **Analytics, Marketing, Inventory** — Placeholder pages
 
 ## Notes
 
-- Single `index.html` file — no dependencies, no build tools
-- All fonts loaded from Google Fonts (requires internet connection)
+- Single `index.html` — no dependencies, no build tools needed
+- Fonts loaded from Google Fonts (requires internet connection for fonts)
 - Prototype only — not connected to a backend
+- Compatible with GitHub Pages for instant hosting
